@@ -19,6 +19,12 @@ const exerciceValidationRules = () => {
             .escape()
             .withMessage("Description must be specified."),
 
+        body("exerciceImg")
+            .trim()
+            .isLength({ min: 1 })
+            .escape()
+            .withMessage("Image must be specified."),
+
         body("nbrRepParSerie")
             .trim()
             .isLength({ min: 1 })
@@ -89,6 +95,7 @@ exports.create = [bodyIdValidationRule(), exerciceValidationRules(), checkValidi
         _id: req.body.id,
         name: req.body.name,
         description: req.body.description,
+        exerciceImg: req.body.exerciceImg,
         nbrRepParSerie: req.body.nbrRepParSerie,
         nbrSeries: req.body.nbrSeries,
         seance: req.body.seance
@@ -130,6 +137,7 @@ exports.update = [
             _id: req.body.id,
             name: req.body.name,
             description: req.body.description,
+            exerciceImg: req.body.exerciceImg,
             nbrRepParSerie: req.body.nbrRepParSerie,
             nbrSeries: req.body.nbrSeries,
             seance: req.body.seance

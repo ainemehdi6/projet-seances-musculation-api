@@ -8,6 +8,7 @@ const exerciceSchema = new mongoose.Schema({
   _id: { type: Number, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
+  exerciceImg: { type: String, required: true },
   nbrRepParSerie: { type: Number, required: true },
   nbrSeries: { type: Number, required: true },
   seance: { type: Number, required: true, ref: "seances" },
