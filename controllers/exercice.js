@@ -143,7 +143,7 @@ exports.update = [
             seance: req.body.seance
         });
 
-        exercice.findByIdAndUpdate(req.params.id, exercice, function (err, result) {
+        Exercice.findByIdAndUpdate(req.params.id, exercice, function (err, result) {
             if (err) {
                 return res.status(500).json(err);
             }
