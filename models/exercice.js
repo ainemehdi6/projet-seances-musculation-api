@@ -10,7 +10,7 @@ const exerciceSchema = new mongoose.Schema({
   description: { type: String, required: true },
   nbrRepParSerie: { type: Number, required: true },
   nbrSeries: { type: Number, required: true },
-  seance: { type: Number, required: true, ref: "seance" },
+  seance: { type: Number, required: true, ref: "seances" },
 
 });
 

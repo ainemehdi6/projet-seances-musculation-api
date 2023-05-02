@@ -97,25 +97,30 @@ exports.getById = [paramIdValidationRule(), checkValidity, (req, res, next) => {
 }];
 
 // Update
-exports.update = [paramIdValidationRule(), seanceValidationRules(), checkValidity, (req, res, next) => {
+exports.update = [
+    paramIdValidationRule(),
+    seanceValidationRules(),
+    checkValidity,
+    (req, res, next) => {
+        // Création de la nouvelle instance de student à modifier
+        var seance = new Seance({
+            _id: req.body.id,
+            seance: req.body.seance,
+        });
 
-    // Création de la nouvelle instance de seance à modifier 
-    var seance = new Seance({
-        _id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
-        date: req.body.date,
-    });
-
-    Seance.findByIdAndUpdate(req.params.id, seance).then((result) => {
-        if (result) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json("Seance with id " + req.params.id + " is not found !");
-        }
-    })
-        .catch((error) => res.status(500).json(error));
-}];
+        Exercice.findByIdAndUpdate(req.params.id, seance, function (err, result) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+            if (!result) {
+                res
+                    .status(404)
+                    .json("Seance with id " + req.params.id + " is not found !");
+            }
+            return res.status(201).json("Seance updated successfully !");
+        });
+    },
+];
 
 // Delete
 exports.delete = [paramIdValidationRule(), checkValidity, (req, res, next) => {

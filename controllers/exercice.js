@@ -103,8 +103,13 @@ exports.create = [bodyIdValidationRule(), exerciceValidationRules(), checkValidi
 // Read
 exports.getAll = (req, res, next) => {
     Exercice.find()
-        .then((result) => res.status(200).json(result))
-        .catch((error) => res.status(500).json(error));
+        .populate("seance")
+        .then(result => {
+            res.status(200).json(result);
+        })
+        .catch(err => {
+            res.status(500).json(err);
+        });
 };
 
 exports.getById = [paramIdValidationRule(), checkValidity, (req, res, next) => {
@@ -114,28 +119,35 @@ exports.getById = [paramIdValidationRule(), checkValidity, (req, res, next) => {
 }];
 
 // Update
-exports.update = [paramIdValidationRule(), exerciceValidationRules(), checkValidity, (req, res, next) => {
+exports.update = [
+    paramIdValidationRule(),
+    exerciceValidationRules(),
+    checkValidity,
+    (req, res, next) => {
 
-    // Création de la nouvelle instance de exercice à modifier 
-    var exercice = new Exercice({
-        _id: req.body.id,
-        name: req.body.name,
-        description: req.body.description,
-        nbrRepParSerie: req.body.nbrRepParSerie,
-        nbrSeries: req.body.nbrSeries,
-        seance: req.body.seance
-    });
+        // Création de la nouvelle instance de exercice à modifier 
+        var exercice = new Exercice({
+            _id: req.body.id,
+            name: req.body.name,
+            description: req.body.description,
+            nbrRepParSerie: req.body.nbrRepParSerie,
+            nbrSeries: req.body.nbrSeries,
+            seance: req.body.seance
+        });
 
-    Exercice.findByIdAndUpdate(req.params.id, exercice)
-        .then((result) => {
-            if (result) {
-                res.status(200).json(result);
-            } else {
-                res.status(404).json("Exercice with id " + req.params.id + " is not found !");
+        exercice.findByIdAndUpdate(req.params.id, exercice, function (err, result) {
+            if (err) {
+                return res.status(500).json(err);
             }
-        })
-        .catch((error) => res.status(500).json(error));
-}];
+            if (!result) {
+                res
+                    .status(404)
+                    .json("Exercice with id " + req.params.id + " is not found !");
+            }
+            return res.status(201).json("Exercice updated successfully !");
+        }).populate("seance");
+    },
+];
 
 // Delete
 exports.delete = [paramIdValidationRule(), checkValidity, (req, res, next) => {
@@ -149,3 +161,17 @@ exports.delete = [paramIdValidationRule(), checkValidity, (req, res, next) => {
         })
         .catch((error) => res.status(500).json(error));
 }];
+
+// Get all exerice from a Seance
+exports.getExerciceFromSeance = [
+    paramIdValidationRule(),
+    checkValidity,
+    (req, res, next) => {
+        Exercice.find({ seance: req.params.id }, function (err, result) {
+            if (err) {
+                return res.status(500).json(err);
+            }
+            return res.status(200).json(result);
+        });
+    },
+];
